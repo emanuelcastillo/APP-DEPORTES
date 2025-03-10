@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - mynetwork
+
+  backend:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: api
+    restart: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/db
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: user
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mariadb
+    networks:
+      - mynetwork
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: shop
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - mynetwork
+
+volumes:
+  mariadb_data:
+
+networks:
+  mynetwork:
+    driver: bridge

@@ -1,0 +1,39 @@
+server:
+  port: 8000
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: api
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: ${DATABASE_URL:jdbc:mariadb://localhost:3306/db}
+    username: ${DATABASE_USER:user}
+    password: ${DATABASE_PASSWORD:user}
+    hikari:
+      connection-timeout: 20000
+      maximum-pool-size: 5
+      minimum-idle: 1
+  jpa:
+    hibernate:
+      ddl-auto: update
+    database-platform: org.hibernate.dialect.MariaDBDialect
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: false
+        dialect: org.hibernate.dialect.MariaDBDialect
+    open-in-view: off
+
+app:
+  jwt:
+    secret: 6ed4cf0db11dc0ce914e0859c74e3f447dad40a88e352e983277d5133be0d14ee342ed85132fb82a62fae5ef2ad143d0588e7d3d884286021cda20681c6b6bcb
+    expiration: ${JWT_EXPIRATION:1} # in weeks
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost,https://app.appsim.org,https://www.appsim.org}
+    allowed-methods: ${CORS_ALLOWED_METHODS:GET,POST,PUT,DELETE,OPTIONS}
+    allowed-headers: ${CORS_ALLOWED_HEADERS:Authorization,Content-Type}
+    exposed-headers: ${CORS_EXPOSED_HEADERS:Authorization}
+    max-age: ${CORS_MAX_AGE:3600}
